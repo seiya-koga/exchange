@@ -89,10 +89,10 @@ public class Application extends Controller {
     	countries.add("CHF");
     	countries.add("AUD");
     	countries.add("GBP");
-    	countries.add("NOK");
+    	countries.add("HKD");
     	return countries;
     }
-    public static Result res2(){
-    	return ok(response.render("aaa"));
+    public static Result cad(){
+    	   return redirect("http://en.wikipedia.org/wiki/gongoozler");
     }
 }

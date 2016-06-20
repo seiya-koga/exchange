@@ -9,6 +9,8 @@
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-3.0.0.min.js")" type="text/javascript"></script>
                 <script src="@routes.Assets.at("javascripts/flare.json")" type="text/javascript"></script>
+                 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+        <script src="html5slider.js"></script>
                 <script src="http://d3js.org/d3.v3.min.js"></script>
                 <script type="text/javascript">
                 function tokei(){
@@ -17,12 +19,12 @@
                 	//文字列部分に今の日時を表示。
                 	ele.innerHTML = Date().toLocaleString();
                 	//tokei関数をタイマー処理で実行。第一引数tokei関数が第二引数ミリ秒後に実行される。
-                	window.setTimeout("tokei()",5000);
+                	window.setTimeout("tokei()",1000);
                 }</script>
 
     </head>
     <body onLoad="tokei();">
-    <div id ="target">目標の文字列</div>
+    <div id ="target"></div>
         @content
     </body>
 </html>

@@ -5,7 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index()
 GET     /res                           controllers.Application.res()
-#GET     /res2                           controllers.Application.res2()
+GET     /CAD                           controllers.Application.cad()
 
 
 

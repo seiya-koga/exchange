@@ -1,4 +1,11 @@
 
-body {
+ body {
 background-color: black;
+}
+#target {
+    background-color: yellow;
+    height:22px;
+}
+.CHF{
+	url:("http://www.htmq.com/csskihon/012.shtml");
 }
