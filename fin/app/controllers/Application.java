@@ -78,9 +78,9 @@ public class Application extends Controller {
     	countries.add("NOK");
     	return countries;
     }
-    public static Result res(){
-    	return ok(response.render("aaa"));
-    }
+//    public static Result res(){
+//    	return ok(response.render("aaa"));
+//    }
 
     private static Set<String> countries2() {
     	Set<String> countries = new HashSet<String>();
