@@ -75,7 +75,7 @@ public class Application extends Controller {
     	countries.add("CHF");
     	countries.add("AUD");
     	countries.add("GBP");
-    	countries.add("NOK");
+    	countries.add("HKD");
     	return countries;
     }
 //    public static Result res(){
