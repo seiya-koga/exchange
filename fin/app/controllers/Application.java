@@ -24,6 +24,9 @@ public class Application extends Controller {
 	    	Map<String,BigDecimal> dollars = dollar();
 	    	Map<String,BigDecimal> yens = yen();
 	    	Map<String,String> result = new HashMap<String,String>();
+	    	Map<String,String> resultDoll = new HashMap<String,String>();
+	    	BigDecimal onehundred = new BigDecimal("100");
+
 	    	for(String country : countries) {
 	    		BigDecimal dollar = dollars.get(country);
     			System.out.println(dollar);
@@ -31,11 +34,19 @@ public class Application extends Controller {
         	   	 System.out.println(yen);
 
 	    		BigDecimal val = dollar.divide(yen,6,BigDecimal.ROUND_HALF_UP);
-	    		System.out.println("はーい"+val);
+
 	    		   result.put( country, val.toString());
 
 	    	}
-	    	return ok(index.render(result));
+	    	for(String country : countries){
+	    		BigDecimal dollar = dollars.get(country);
+	    		BigDecimal multi = dollar.multiply(onehundred);
+	    		resultDoll.put(country, multi.toString());
+
+
+	    	}
+	    	System.out.println(resultDoll);
+	    	return ok(index.render(result,resultDoll));
 
 	  }
 
@@ -78,9 +89,10 @@ public class Application extends Controller {
     	countries.add("HKD");
     	return countries;
     }
-//    public static Result res(){
-//    	return ok(response.render("aaa"));
-//    }
+    public static Result usd(String msg,String msg2){
+    	System.out.println(msg+msg2);
+    	return ok(usdChart.render(msg,msg2));
+    }
 
     private static Set<String> countries2() {
     	Set<String> countries = new HashSet<String>();

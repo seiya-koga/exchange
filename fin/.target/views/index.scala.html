@@ -1,9 +1,31 @@
- @(result:Map[String,String]) @main("Welcome to Play") {
+ @(result:Map[String,String],resultDoll:Map[String,String]) @main("Welcome to Play") {
+
+     <script type="text/javascript">
+                function tokei(){
+                	//target要素を選択
+                	var ele = document.getElementById("target");
+                	//文字列部分に今の日時を表示。
+                	ele.innerHTML = Date().toLocaleString();
+                	//tokei関数をタイマー処理で実行。第一引数tokei関数が第二引数ミリ秒後に実行される。
+                	window.setTimeout("tokei()",1000);
+                }</script>
+
+                  <body class= "hi" onload="tokei();">
+    <div id ="target"></div>
+
 <script type="text/javascript">
-var alldata =[@for((key,value) <- result){{name:'@key',value:@value/* ,url:"https://www.google.com" */},}];
+var alldata =[@for((key,value) <- result){{name:'@key',value:@value},}];
 console.log(JSON.stringify(alldata));
+
+var dolldata =[@for((key,value) <- resultDoll){{name:'@key',value:@value},}];
+console.log(JSON.stringify(dolldata));
 //配列をソート
 alldata.sort(function(a,b){
+    if(a.value<b.value) return -1;
+    if(a.value > b.value) return 1;
+    return 0;
+});
+dolldata.sort(function(a,b){
     if(a.value<b.value) return -1;
     if(a.value > b.value) return 1;
     return 0;
@@ -11,23 +33,14 @@ alldata.sort(function(a,b){
 var dataset = { //csvデータを一つのchidrenとしてデータセットを作成
 		 children:alldata
     };
+var dolldataset = { //csvデータを一つのchidrenとしてデータセットを作成
+		 children:dolldata
+   };
+
 console.log(JSON.stringify(dataset));
+console.log(JSON.stringify(dolldataset));
 
 
-var valueset = [ @for((key,value) <- result){@value,}]
-console.log(JSON.stringify(valueset));
-
-
-/* var keyset = [ @for((key,value) <- result){@key,}]
-console.log(JSON.stringify(keyset));
-//配列をソート
-keyset.sort(function(a,b){
-    if(a.value<b.value) return -1;
-    if(a.value > b.value) return 1;
-    return 0;
-}); */
-
-var word = "gongoozler";
 
     //各要素のattrの内容（変数にしておくとアップデートを行うときに便利)
     var circleAttr = {
@@ -49,7 +62,7 @@ var word = "gongoozler";
 
 
 var w = 1280,
-h = 1200,
+h = 980,
 radius = w/4;
 
 var svg = d3.select("body").append("svg")
@@ -69,7 +82,9 @@ var circleGroup = svg.selectAll("g")
         return "translate(" + d.x + "," + (d.y+50) + ")";
     })
     .append("a")
-    .attr("xlink:href", "")
+    .attr("xlink:href", function(d){
+    	return "usd/"+d.name+ "/JPY"
+    })
 .filter(function(d) { return !d.children; });
 
 
@@ -144,84 +159,9 @@ var label = circleGroup
         .text('exchange');
 
 
-/*
- circleGroup.transition().duration(5000)
- .attr('cx', function(d,i) { return i * 2+5; })
-        .attr('cy', function(d,i) { return i * 3+5; });
-function move(elm, msec, alpha, beta)
-{
-    elm.transition().duration(msec)
-       .attr('cx', function(d,i) { return i * alpha; })
-       .attr('cy', function(d,i) { return i * beta; });
-}
 
-circleGroup.call(move, 1000, 2, 3)
-       .call(move, 1000, Math.random(), Math.random())
-       .call(move, 1000, 4, 2); */
+</script>
 
-
-
-/*
-
-     //ループアニメーション
-        function slide(i,$this) {
-           var circle = d3.select($this);
-
-           (function repeat(i) {
-               var j = ( i + 1 > 9 ) ? 0 : i + 1;
-               circle
-               .transition()
-                   .delay( 2000 )
-                   .duration(1000)
-                   .ease("elastic")
-                   .attr({
-                       cx: center.x,
-                       cy: center.y,
-                       r: 0
-                   })
-                   .attr({
-                       x: center.x,
-                       y: center.y,
-                       r: 0
-                   })
-                   .each("end", function(d,i) {
-                       d3.select(this).data(valueset)
-                           .transition()
-                               .duration(1000)
-                               .ease("elastic")
-                               .attr(circleAttr)
-                               .attr(labelAttr)
-							   .attr("r",  function(d,i){ return i*50+30;})
-							    .each("end", function(d, i) { repeat(j); });
-                   });
-           })(i);
-       } */
-
-
-
-
-
-
-
-
-
-      /*  d3.select("body").on("click", function(){
-       }); */
-
-
-
-
-        /*   arr.forEach(function(d,i){
-        	  circleGroup
-           .select("circle.EUR")
-           .transition()
-           .delay(i * 800)
-           .duration(3000)
-           .attr("cx", d.x)
-           .attr("cy", d.x);
-          });  */
-
-    </script>
 }
 
 
