@@ -1,6 +1,6 @@
- @(result:Map[String,String],resultDoll:Map[String,String]) @main("Welcome to Play") {
+ @(result:Map[String,String],usd:Map[String,String]) @main("Welcome to Play") {
 
-     <script type="text/javascript">
+<script type="text/javascript">
                 function tokei(){
                 	//target要素を選択
                 	var ele = document.getElementById("target");
@@ -10,35 +10,32 @@
                 	window.setTimeout("tokei()",1000);
                 }</script>
 
-                  <body class= "hi" onload="tokei();">
-    <div id ="target"></div>
+<body class="time" onload="tokei();">
+	<div id="target"></div>
 
-<script type="text/javascript">
-var alldata =[@for((key,value) <- result){{name:'@key',value:@value},}];
+	<script type="text/javascript">
+
+	var alldata = @for((key,value) <- usd){
+
+[@for((key,value) <- result){{name:'@key',value:@value},}{name:'USD',value:@value}];
+	};
 console.log(JSON.stringify(alldata));
 
-var dolldata =[@for((key,value) <- resultDoll){{name:'@key',value:@value},}];
-console.log(JSON.stringify(dolldata));
+
+
 //配列をソート
 alldata.sort(function(a,b){
-    if(a.value<b.value) return -1;
-    if(a.value > b.value) return 1;
+    if(a.value>b.value) return -1;
+    if(a.value < b.value) return 1;
     return 0;
 });
-dolldata.sort(function(a,b){
-    if(a.value<b.value) return -1;
-    if(a.value > b.value) return 1;
-    return 0;
-});
+
 var dataset = { //csvデータを一つのchidrenとしてデータセットを作成
 		 children:alldata
     };
-var dolldataset = { //csvデータを一つのchidrenとしてデータセットを作成
-		 children:dolldata
-   };
 
-console.log(JSON.stringify(dataset));
-console.log(JSON.stringify(dolldataset));
+
+//console.log(JSON.stringify(dataset));
 
 
 
@@ -62,8 +59,8 @@ console.log(JSON.stringify(dolldataset));
 
 
 var w = 1280,
-h = 980,
-radius = w/4;
+h = 900;
+
 
 var svg = d3.select("body").append("svg")
             .attr("width", w)
@@ -77,15 +74,20 @@ var circleGroup = svg.selectAll("g")
 .data(packman.nodes(dataset))
 .enter()
 .append("g")
-//.attr("class", function(d, i) { return "g" + i+1; })
 .attr("transform", function(d) {    // 円のX,Y座標を設定
         return "translate(" + d.x + "," + (d.y+50) + ")";
     })
     .append("a")
     .attr("xlink:href", function(d){
-    	return "usd/"+d.name+ "/JPY"
+    	return "chart/JPY/"+d.name
     })
-.filter(function(d) { return !d.children; });
+.filter(function(d) { return !d.children; })
+.on("mouseover", function(d) {
+          d3.select(this).attr("fill-opacity", 1);
+     })
+      .on("mouseout", function(d) {
+          d3.select(this).attr("fill-opacity", 0.8);
+     });
 
 
 //サークルカラー
@@ -109,7 +111,8 @@ var circle = circleGroup.append('circle') //各サークル作成
 
   /*円の大きさ指定  */
 .attr(circleAttr)
- .attr("r",  function(d,i){ return i*40+60;});
+ .attr("r",  function(d,i){ return i*30+60;});
+
 
 
 /* 国の名前デザイン */
@@ -133,8 +136,6 @@ var label = circleGroup
  .transition()
 .delay( function(d,i){ return i*2000; } )
 .duration(1000)
-//.ease("elastic")
-
         .attr({
             fill: "white",
             "font-size": "20px",
@@ -162,7 +163,4 @@ var label = circleGroup
 
 </script>
 
-}
-
-
-
+	}

@@ -1,60 +1,18 @@
 @(msg:String,msg2:String) @main("welcom to play"){
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 <h1>@msg/@msg2</h1>
-
-<!-- 軸の属性を決めている。特にfill:none;にしないと真っ黒になる。-->
-<style>
-element.style {
-	fill: rgb(255, 255, 255);
-	font-size: 12px;
-	opacity: 1;
-}
-
-.h1 {
-	color: red;
-}
-
-.axis text {
-	font-size: 10px;
-}
-
-.axis path {
-	/*
-fillとopacityで半透明な背景色。
-		*/
-	fill: Aquamarine;
-	opacity: 0.1;
-	stroke: #000;
-	stroke-width: 1;
-	shape-rendering: crispEdges;
-}
-
-.axis line {
-	stroke: #000;
-	stroke-width: 2;
-	shape-rendering: crispEdges;
-}
-.tick line {
-    fill: none;
-    stroke: #222222;
-    opacity: 0.2;
-    shape-rendering: crispEdges;
-    stroke-width: 1;
-    stroke-dasharray: 10 2;
-}
-</style>
+<p>Price(円)</p>
 
 
 
 <script>
 
 	var margin = {
-		top : 20,
+		top : 10,
 		right : 40,
 		bottom : 30,
-		left : 40
-	}, width = 1200 - margin.left - margin.right, height = 640 - margin.top
-			- margin.bottom;
+		left : 50
+	}, width = 1280 - margin.left - margin.right, height = 600 - margin.top- margin.bottom;
 
 	var barPadding = 1; // <-- パディング（棒の間の間隔）を追加！
 	var svg = d3.select("body").append("svg").attr("width",
@@ -65,43 +23,39 @@ fillとopacityで半透明な背景色。
 	d3.csv('@routes.Assets.at( "javascripts/exchangeYen.csv")', function(data) {
 		// yScaleのために、closeの最大値を出す。
 		var yMax = d3.max(data, function(d) {
-			return +d["@msg/@msg2"]*100;
+			return +d["@msg/@msg2"];
 		});
 		var yMin = d3.min(data, function(d) {
-			return +d["@msg/@msg2"]*100;
+			return +d["@msg/@msg2"];
 		});
 		// "日-月-年"からDateオブジェクトを作る。
 		var format = d3.time.format("%b-%Y");
 		// Dateオブジェクトから"年-月-日"に変換する。
 		var newFormat = d3.time.format("%Y-%b");
 
-		// xScaleには、データレコードの数を最大値に使う。
-		var xScale = d3.scale.linear().domain([ 0, 120 ]).range(
-				[ 0, width ]);
-
-		var yScale = d3.scale.linear().domain([ yMin - 0.0002, yMax + 0.0002 ])
-				.range([ height, 0 ]);
-
+		// xScaleとx軸のメモリ
+		var xScale = d3.scale.linear().domain([0,data.length]).range([0,width]);
 		var xAxis = d3.svg.axis().scale(xScale).ticks(10).orient("bottom")
 				.tickSize(6, -height)
 				.innerTickSize( -height )  // 内向きのグリッド線
-				.outerTickSize( 5 )        // 外向きのグリッド線
+				.outerTickSize( 0 )        // 外向きのグリッド線
 				 .tickPadding( 10 )        // 軸と軸テキストの距離
 				.tickFormat(function(i) {
-					var f = format.parse(data[i]["MMM YYYY"]); // dateからDateオブジェクトを作る。
+					var f = format.parse(data[i]["MMM-YYYY"]) // dateからDateオブジェクトを作る。
 					return newFormat(f); // Dateオブジェクトから新しい"年-月-日"の並びに変える。
 				});
+		svg.append("g").attr("class", "x axis").attr("transform","translate(0," + height + ")").call(xAxis);
+
+		 //yScaleとy軸のメモリ
+		 	var yScale = d3.scale.linear().domain([ yMin, yMax + 1 ])
+				.range([ height, 0 ]);
 
 		var yAxis = d3.svg.axis().ticks(20).scale(yScale).orient("left")
 				.tickSize(6, -width)
 	              .tickPadding( 10 );        // 軸と軸テキストの距離;
 
 		svg.append("g").attr("class", "y axis").call(yAxis).append("text")
-				.attr("y", -10).attr("x", 10).style("text-anchor", "end").text("Price($)");
-
-		svg.append("g").attr("class", "x axis").attr("transform","translate(0," + height + ")").call(xAxis);
-
-
+				.attr("y", -10).attr("x", 10).style("text-anchor", "end");
 
 		//棒グラフ
 		var barchart　= svg.selectAll("rect").data(data).enter().append("rect").attr({
@@ -119,19 +73,19 @@ fillとopacityで半透明な背景色。
 		barchart.transition()
 			//縦棒グラフの左側からアニメーションを開始するように設定する
 		.delay(function(d, i) {
-			return i * 22;
-		}).duration(1000)
+			return i * 12;
+		}).duration(2000)
 		.ease("bounce")
 		.attr({
 			x : function(d, i) {
 				return xScale(i)
 			},
 			y : function(d) {
-				return yScale(d["@msg/@msg2"]*100);
+				return yScale(d["@msg/@msg2"]);
 			}, //縦位置を下方向に揃える
 			width : 5,
 			height : function(d) {
-				return height - yScale(d["@msg/@msg2"]*100);
+				return height - yScale(d["@msg/@msg2"]);
 			},
 		}).attr("fill","steelBlue");
 
@@ -141,11 +95,11 @@ fillとopacityで半透明な背景色。
 			return xScale(i)
 		}) // 横方向はSVG領域に合わせて調整。データは最低2個あるのが前提
 		.y(function(d) {
-			return yScale(d["@msg/@msg2"]*100);
+			return yScale(d["@msg/@msg2"]);
 		}) // 縦方向は数値そのままでスケール等しない
-		line.interpolate("basis")
-		// 折れ線グラフ1を描画
-		var path = svg.append("path").attr("class", "line").attr("d",line(data));// 線を描画
+		//line.interpolate("basis")//丸みを持たせるため
+		// 折れ線グラフを描画
+		var path = svg.append("path").attr("class", "line").attr("d",line(data));
 
 		// パスの長さを取得
 		var totalLength = path.node().getTotalLength();
@@ -163,24 +117,15 @@ fillとopacityで半透明な背景色。
 
 		svg.on("click", function() {
 			barchart.transition()
-			//縦棒グラフの左側からアニメーションを開始するように設定する
+			//縦棒グラフの左側からアニメーション削除を開始するように設定する
 			.delay(function(d, i) {
 				return i * 15;
 			}).duration(100).remove();
-			// path
-			//   .transition()
-			//   .duration(1000)
-			//   .ease("linear")
-			//   .attr("stroke-dashoffset", totalLength)
 
 			// 散布図
 			svg.selectAll("circle").data(data).enter().append("circle")
 			//アニメーションをする
 			.transition().duration(300)
-			// /*
-			// 	縦棒グラフの左側から
-			// 	アニメーションを開始するように設定する
-			// */
 			.delay(function(d, i) {
 				return i * 15;
 			}).attr("r", 5).attr("fill", "steelBlue")
@@ -188,7 +133,7 @@ fillとopacityで半透明な背景色。
 						return xScale(i);
 					})
 					.attr("cy", function(d) {
-				return yScale(d["@msg/@msg2"]*100);
+				return yScale(d["@msg/@msg2"]);
 			});
 
 

@@ -4,8 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index()
-GET     /usd/:msg/:msg2                          controllers.Application.usd(msg:String,msg2:String)
-GET     /CAD                           controllers.Application.cad()
+GET     /chart/:msg/:msg2                          controllers.Application.chart(msg:String,msg2:String)
 
 
 
